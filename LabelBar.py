@@ -5,25 +5,23 @@ from matplotlib import pyplot as plt
 # Tuning Parameters
 sigma = 0.33 # Canny's formula
 houghLineLength = 100
-houghLineGap = 80
+houghLineGap = 10
 dilationIterations = 3
-erosionIterations = 1
+erosionIterations = 2
 epsilonFactor = 0.03
-minAspectRatio = 0.5
-maxAspectRatio = 4
-rectMinApprox = 4
-rectMaxApprox = 10
-minAreaFilter = 5000
+houghLineThickness = 2
+minContourArea = 2000
 
-img = cv.imread('data/projectTes.jpeg', cv.IMREAD_COLOR)
+
+img = cv.imread('data/pic3.png', cv.IMREAD_COLOR)
 
 def labelBarDetection(img):
 
     # Image Preparation & Kernel defintion of 5*5 Matrix
 
     grayImg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
     kernel = np.ones((3, 3), np.uint8)
+
     # Automatic canny edge detection using sigma value = 0.33
     v = np.median(grayImg)
     lower = int(max(0, (1.0 - sigma) * v))
@@ -39,23 +37,17 @@ def labelBarDetection(img):
 
     for line in lines:
         x1, y1, x2, y2 = line[0]
-        cv.line(processingImg, (x1, y1), (x2, y2), (255, 255, 255), 5)
+        cv.line(processingImg, (x1, y1), (x2, y2), (255, 255, 255), houghLineThickness)
 
     # Eroding to remove noise edges
     erode = cv.erode(processingImg, kernel, iterations=erosionIterations)
 
     # Finding contours
     contours, hierarchy = cv.findContours(processingImg, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-
-    # Filtering founded contours
-    filtered = []
-    for c in contours:
-        if cv.contourArea(c) < minAreaFilter: continue
-        filtered.append(c)
-
-    # print(len(filtered))
-    #detectedLabelBars = [[0 for x in range(len(filtered))] for y in range(4)]
-    counter = 0
+    #print(len(contours))
+    detectedLabelBars = {}
+    hierarchyCounter = 0
+    dictionaryCounter = 0
     # Drawing contours
     for cont in contours:
         epsilon = epsilonFactor * cv.arcLength(cont, True)
@@ -63,20 +55,21 @@ def labelBarDetection(img):
 
         x, y, w, h = cv.boundingRect(cont)
 
-        print(len(approx))
+        #print(len(approx))
         # Checking if it is a rectangle
-        if len(approx) == 4:
-            if(hierarchy.ravel()[counter*4 + 2] != -1):
+        if len(approx) == 4 and cv.contourArea(cont) > minContourArea:
+            if(hierarchy.ravel()[hierarchyCounter*4 + 2] == -1 ):#and hierarchy.ravel()[hierarchyCounter*4 + 3] == -1):
+                #print(hierarchy.ravel())
                 cv.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                #detectedLabelBars[counter].append(x,y,w,h)
-
-        counter += 1
+                detectedLabelBars[dictionaryCounter] = [x+w/2,y-h/2,w,h]
+                dictionaryCounter += 1
+        hierarchyCounter += 1
 
         # col = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         # cv.drawContours(img, [approx], -1, col, 5)
 
-    titles = ['Orignal','Gray','Canny','Processing','erode','dil']
-    images = [img,grayImg,edges,processingImg,erode,dil]
+    titles = ['Orignal','Gray','Canny','Processing','dil']
+    images = [img,grayImg,edges,processingImg,dil]
 
     rows = 2
     columns = 4
@@ -86,10 +79,11 @@ def labelBarDetection(img):
         plt.title(titles[ite])
     plt.show()
 
-    #return detectedLabelBars
+    return detectedLabelBars
 
+x = {}
 
-labelBarDetection(img)
+x = labelBarDetection(img)
 
 cv.waitKey(0)
 cv.destroyAllWindows()
