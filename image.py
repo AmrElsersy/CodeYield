@@ -6,10 +6,14 @@ def detectImage(img):
     lower = int(max(0, (1.0 - 0.33) * v))
     upper = int(min(255, (1.0 + 0.33) * v))
     edges = cv2.Canny(img, lower, upper)
-    kernel = np.ones((3,3),np.uint8)                                                    # make the kernel to with average square to fill all the shapes
-    dilate = cv2.dilate(edges,kernel,iterations=4)                                     # fill all the shape with 5 iterations
-    contours,hierarchy = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE) # detect all contours with tree hierarchy
-    approx_shapes = []                                                                  # empty list to be fill with the approximations
+    cv2.namedWindow('edges', cv2.WINDOW_FREERATIO)
+    cv2.imshow('edges', edges)
+    kernel = np.ones((3,3),np.uint8)
+    dilate = cv2.dilate(edges,kernel,iterations=4)
+    cv2.namedWindow('dilate', cv2.WINDOW_FREERATIO)
+    cv2.imshow('dilate', dilate)
+    contours,hierarchy = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    approx_shapes = []
     for contour in contours:
         approx = cv2.approxPolyDP(contour,0.04*cv2.arcLength(contour,True),True)
         approx_shapes.append(approx)
@@ -18,72 +22,30 @@ def detectImage(img):
     n = 0
     while n < len(approx_shapes):
         if(len(approx_shapes[n]) == 4):
-            crossTriangle = n + 1
-            triangleNumber = 0;
-            for i in range(crossTriangle,crossTriangle + 4):
-                if(i < len(approx_shapes) and hierarchy.ravel()[i*4 + 3] == n and len(approx_shapes[i]) == 3):
+            triangleNumber = 0
+            for i in range(len(approx_shapes)):
+                if(hierarchy[0][i][3] == n and len(approx_shapes[i]) == 3):
                     triangleNumber += 1
-                else:
-                    n = i
-                    break
             if(triangleNumber == 4):
                 width = abs(approx_shapes[n].ravel()[4] - approx_shapes[n].ravel()[0])
                 height = abs(approx_shapes[n].ravel()[5] - approx_shapes[n].ravel()[1])
-                centerx = approx_shapes[n].ravel()[0] + width/2
-                centery = approx_shapes[n].ravel()[1] + height / 2
+                centerx = (approx_shapes[n].ravel()[0] + approx_shapes[n].ravel()[4])/2
+                centery = (approx_shapes[n].ravel()[1] + approx_shapes[n].ravel()[5])/2
                 imageParameter.append({'CenterX' : centerx,'CenterY' : centery,'Width' : width,'Height' : height})
                 imagesNumber += 1
-                n += 5
+                cv2.drawContours(img, [approx_shapes[n]], 0, (0, 0, 255), 2)
+                cv2.putText(img, "Image", (int(centerx), int(centery - height/2 - 10)), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0))
+            n += 1
         else:
             n += 1
+    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    cv2.imshow('image', img)
     return  imagesNumber , imageParameter
 
-img = cv2.imread('imageBox.png')
+img = cv2.imread('testcase.jpeg')
 number , imageList = detectImage(img)
 print(number)
 print(imageList)
-v = np.median(img)
-lower = int(max(0, (1.0 - 0.33) * v))
-upper = int(min(255, (1.0 + 0.33) * v))
-edges = cv2.Canny(img, lower, upper)
-cv2.namedWindow('edges',cv2.WINDOW_FREERATIO)
-cv2.imshow('edges',edges)
-kernel = np.ones((3,3),np.uint8)
-dilate = cv2.dilate(edges,kernel,iterations=4)
-cv2.namedWindow('dilate',cv2.WINDOW_FREERATIO)
-cv2.imshow('dilate',dilate)
-contours, hierarchy = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-approx_shapes = []
-for contour in contours:
-    approx = cv2.approxPolyDP(contour,0.04*cv2.arcLength(contour,True),True)
-    approx_shapes.append(approx)
-    x = approx.ravel()[0]
-    y = approx.ravel()[1] - 5
-    if len(approx) == 2:
-        cv2.drawContours(img, [approx], 0, (255, 0, 0), 2)
-        cv2.putText(img,"Line",(x,y),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0))
-    elif len(approx) == 3:
-        cv2.drawContours(img, [approx], 0, (255, 0, 0), 2)
-        cv2.putText(img,"Triangle",(x,y),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0))
-    elif len(approx) == 4:
-        cv2.drawContours(img, [approx], 0, (0, 0, 255), 2)
-        x , y , w, h = cv2.boundingRect(approx)
-        aspectRatio = float(w)/h
-        if aspectRatio >= 0.95 and aspectRatio <= 1.05:
-            cv2.putText(img,"Square",(x,y),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0))
-        else:
-            cv2.putText(img, "Rectangle", (x, y), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
-    elif len(approx) == 5:
-        cv2.drawContours(img, [approx], 0, (255, 0, 0), 2)
-        cv2.putText(img,"Pentagon",(x,y),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0))
-    elif len(approx) == 10:
-        cv2.drawContours(img, [approx], 0, (255, 0, 0), 2)
-        cv2.putText(img,"Star",(x,y),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0))
-    else:
-        cv2.drawContours(img, [approx], 0, (255, 0, 0), 2)
-        cv2.putText(img,"Circle",(x,y),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,0,0))
-cv2.namedWindow('image',cv2.WINDOW_FREERATIO)
-cv2.imshow('image',img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
