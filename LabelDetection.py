@@ -5,13 +5,11 @@ import numpy as np
 def labelDetection(scrImagePath = 'zigzag2.jpeg'):
     sigma = 0.33  # Canny's formula
     dilationIterations = 1
-    # erosionIterations = 2
     epsilonFactor = 0.03
     img = cv2.imread(scrImagePath)
     kernel = np.ones((1, 1), np.uint8)
     #list to store the values of the rectangles drawn around zigzag
     detectedLabels = []
-    dictionary = {}
     #filtering the image by using gaussian filter then
     # img_blurred = cv2.GaussianBlur(img , (5,5), 0)
 
@@ -41,7 +39,7 @@ def labelDetection(scrImagePath = 'zigzag2.jpeg'):
                          'w':w,
                          'h':h}
             # print(dictionary)
-            detectedLabels.append(dictionary)
+            detectedLabels.append(c)
             # print('The Value :'+str(len(approx)))
 
 
