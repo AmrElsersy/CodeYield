@@ -20,6 +20,7 @@ def detectImage(img):
     imagesNumber = 0
     imageParameter = []
     n = 0
+    image_approx = []
     while n < len(approx_shapes):
         if(len(approx_shapes[n]) == 4):
             triangleNumber = 0
@@ -33,6 +34,7 @@ def detectImage(img):
                 centery = (approx_shapes[n].ravel()[1] + approx_shapes[n].ravel()[5])/2
                 imageParameter.append({'CenterX' : centerx,'CenterY' : centery,'Width' : width,'Height' : height})
                 imagesNumber += 1
+                image_approx.append(approx_shapes[n])
                 cv2.drawContours(img, [approx_shapes[n]], 0, (0, 0, 255), 2)
                 cv2.putText(img, "Image", (int(centerx), int(centery - height/2 - 10)), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0))
             n += 1
@@ -40,11 +42,10 @@ def detectImage(img):
             n += 1
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', img)
-    return  imagesNumber , imageParameter
+    return  image_approx
 
 img = cv2.imread('testcase.jpeg')
-number , imageList = detectImage(img)
-print(number)
+imageList = detectImage(img)
 print(imageList)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
