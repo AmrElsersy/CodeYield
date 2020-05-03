@@ -70,7 +70,7 @@ def labelBarDetection(img):
     # Finding contours
     contours, hierarchy = cv.findContours(processingImg, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-    detectedLabelBars = {}
+    detectedLabelBars = []
     hierarchyCounter = 0
     
     # Drawing contours
