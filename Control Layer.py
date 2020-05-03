@@ -26,14 +26,14 @@ class Shape:
         self.radius = radius
         self.widthRatio = 0
         self.heightRatio = 0
-        # Right-Left-Center
+        # Right-Left
         self.allignment = ""
 
 class HtmlRow:
     def __init__(self):
         self.shapesPerRow = []
-        self.column0 = []
-        self.column1 = []
+        self.column1Shapes = []
+        self.column2Shapes = []
         self.column1Ratio = 0
         self.column2Ratio = 0
         self.height = 0
@@ -128,18 +128,59 @@ listOfRows.append(temporaryRow)
 #print(len(listOfRows))
 #print(listOfRows[0].height)
 
-# Retrieving maximum width of a shape for each row
+# Retrieving maximum width of a shape for each row & calc. ratio of columns
 for rowsCounter in range(len(listOfRows)):
 
-    for shapes in range(len(listOfRows[rowsCounter] - 1)):
+    for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)-1):
 
         if listOfRows[rowsCounter].shapesPerRow[shapes+1].w > listOfRows[rowsCounter].shapesPerRow[shapes].w:
             listOfRows[rowsCounter].maxWidthIndex = shapes+1
 
     maxWidthShape = listOfRows[rowsCounter].shapesPerRow[ listOfRows[rowsCounter].maxWidthIndex ]
 
+    if maxWidthShape.x <= colMarginXPoint:
+        maxColumnWidth = maxWidthShape.x + (maxWidthShape.w / 2)
+        listOfRows[rowsCounter].column1Ratio = maxColumnWidth / imageWidth
+        listOfRows[rowsCounter].column2Ratio = 1 - listOfRows[rowsCounter].column1Ratio
 
 
+# Appending each shape to their belong column
+for rowsCounter in range(len(listOfRows)):
 
+    for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)):
+        # Checking if the shape lies either in the left column or right one
+        if listOfRows[rowsCounter].shapesPerRow[shapes].x <= (listOfRows[rowsCounter].column1Ratio * imageWidth):
+            listOfRows[rowsCounter].column1Shapes.append(listOfRows[rowsCounter].shapesPerRow[shapes])
+            # Assigning shape width ratio
+            shapeWidthRatio = listOfRows[rowsCounter].shapesPerRow[shapes].width / (listOfRows[rowsCounter].column1Ratio * imageWidth)
+            listOfRows[rowsCounter].shapesPerRow[shapes].widthRatio = shapeWidthRatio
 
+            # Assigning shape height ratio
+            shapeHeightRatio = listOfRows[rowsCounter].shapesPerRow[shapeAllignment].height / listOfRows[rowsCounter].height
+            listOfRows[rowsCounter].shapesPerRow[shapes].heightRatio = shapeHeightRatio
+
+            # Assigning shape allignment
+            shapeAllignment = (listOfRows[rowsCounter].column1Ratio * imageWidth) / 2
+            if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
+                listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
+            else:
+                listOfRows[rowsCounter].shapesPerRow[shapes] = "RIGHT"
+
+        else:
+            listOfRows[rowsCounter].column2Shapes.append(listOfRows[rowsCounter].shapesPerRow[shapes])
+            # Assigning shape width ratios
+            shapeWidthRatio = listOfRows[rowsCounter].shapesPerRow[shapes].width / (
+                        listOfRows[rowsCounter].column1Ratio * imageWidth)
+            listOfRows[rowsCounter].shapesPerRow[shapes].widthRatio = shapeWidthRatio
+
+            # Assigning shape height ratio
+            shapeHeightRatio = listOfRows[rowsCounter].shapesPerRow[shapeAllignment].height / listOfRows[rowsCounter].height
+            listOfRows[rowsCounter].shapesPerRow[shapes].heightRatio = shapeHeightRatio
+
+            # Assigning shape allignment
+            shapeAllignment = (listOfRows[rowsCounter].column1Ratio * imageWidth) / 2
+            if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
+                listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
+            else:
+                listOfRows[rowsCounter].shapesPerRow[shapes] = "RIGHT"
 
