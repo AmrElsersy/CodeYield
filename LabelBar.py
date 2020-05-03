@@ -70,9 +70,9 @@ def labelBarDetection(img):
     # Finding contours
     contours, hierarchy = cv.findContours(processingImg, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-    detectedLabelBars = {}
+    detectedLabelBars = []
     hierarchyCounter = 0
-    dictionaryCounter = 0
+    
     # Drawing contours
     for cont in contours:
         epsilon = epsilonFactor * cv.arcLength(cont, True)
@@ -84,8 +84,8 @@ def labelBarDetection(img):
             if(hierarchy.ravel()[hierarchyCounter*4 + 2] == -1 ):
                 #print(hierarchy.ravel())
                 cv.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                detectedLabelBars[dictionaryCounter] = [x+w/2,y-h/2,w,h]
-                dictionaryCounter += 1
+                detectedLabelBars.append(approx)
+                
         hierarchyCounter += 1
 
     return detectedLabelBars
