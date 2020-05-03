@@ -5,14 +5,14 @@ from cross_circle import detectIcon
 from LabelBar import labelBarDetection
 from LabelDetection import labelDetection
 
-path = "data/test2.jpeg"
+path = "data/all.png"
 img = cv.imread(path)
 imageHeight, imageWidth, imageChannels = img.shape
-#print(imageHeight,imageWidth)
+print(imageHeight,imageWidth)
 
 # Tuning Parameters
-rowMarginBetweenShapes = 100
-colMarginXPoint = int(imageHeight / 2)
+rowMarginBetweenShapes = 0.15*imageHeight
+colMarginXPoint = int(imageWidth / 2)
 noOfColumnsPerRow = 2
 
 
@@ -91,39 +91,49 @@ for iterator in range(len(icon)):
 shapesList = sorted(shapesList, key=lambda x: x.y, reverse=False)
 
 # for i in range(len(shapesList)):
-#     print(shapesList[i].name)
+#     print(shapesList[i].name,shapesList[i].y)
 
 
+def handlingRows():
 
-incrementRowFlag = False
-temporaryRow = HtmlRow()
+    incrementRowFlag = False
+    temporaryRow = HtmlRow()
 
-# 1st minimum-y shape is inserted into 1st row
-temporaryRow.shapesPerRow.append(shapesList[0])
-startYPoint = 0
-endYPoint = shapesList[0].y + shapesList[0].height / 2
-#print(temporaryRow.shapesPerRow[0].height)
+    # 1st minimum-y shape is inserted into 1st row
+    temporaryRow.shapesPerRow.append(shapesList[0])
 
-for iterator in range(len(shapesList) - 1):
-    diff = abs(shapesList[iterator].y - shapesList[iterator + 1].y)
-    if diff < rowMarginBetweenShapes:
-        # Calc. height of each row
-        endYPoint = max(endYPoint, shapesList[iterator+1].y + shapesList[iterator+1].height / 2)
-        if incrementRowFlag == True:
-            # Inserting height of each row
-            temporaryRow.height = endYPoint - startYPoint
-            startYPoint = endYPoint
+    # print(temporaryRow.shapesPerRow[0].height)
 
-            # Inserting a new row
-            temporaryRow = HtmlRow()
-            incrementRowFlag = False
-            temporaryRow.shapesPerRow.append(shapesList[iterator+1])
-    else:
-        incrementRowFlag = True
-        listOfRows.append(temporaryRow)
+    for iterator in range(len(shapesList) - 1):
+        diff = abs(shapesList[iterator].y - shapesList[iterator + 1].y)
+        if diff < rowMarginBetweenShapes:
+            # Calc. height of each row
+            if incrementRowFlag == True:
+                # Creating a new row
+                temporaryRow = HtmlRow()
+                incrementRowFlag = False
+            temporaryRow.shapesPerRow.append(shapesList[iterator + 1])
+        else:
+            incrementRowFlag = True
+            listOfRows.append(temporaryRow)
 
-# Appending last row elements
-listOfRows.append(temporaryRow)
+    # Appending last row elements
+    listOfRows.append(temporaryRow)
+
+    startYPoint = 0
+    endYPoint = 0
+
+    #print(len(listOfRows[0].shapesPerRow))
+
+    for rowsCounter in range(len(listOfRows)):
+
+        for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)):
+            endYPoint = max(endYPoint, listOfRows[rowsCounter].shapesPerRow[shapes].y +  (listOfRows[rowsCounter].shapesPerRow[shapes].height / 2))
+
+        listOfRows[rowsCounter].height = endYPoint - startYPoint
+        startYPoint = endYPoint
+
+handlingRows()
 
 #print(len(listOfRows))
 #print(listOfRows[0].height)
@@ -132,16 +142,21 @@ listOfRows.append(temporaryRow)
 for rowsCounter in range(len(listOfRows)):
 
     for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)-1):
-
-        if listOfRows[rowsCounter].shapesPerRow[shapes+1].w > listOfRows[rowsCounter].shapesPerRow[shapes].w:
+        if listOfRows[rowsCounter].shapesPerRow[shapes+1].width > listOfRows[rowsCounter].shapesPerRow[ listOfRows[rowsCounter].maxWidthIndex ].width:
             listOfRows[rowsCounter].maxWidthIndex = shapes+1
 
+    # Retrieving maximum width for each shape for each row
     maxWidthShape = listOfRows[rowsCounter].shapesPerRow[ listOfRows[rowsCounter].maxWidthIndex ]
 
+    #
     if maxWidthShape.x <= colMarginXPoint:
-        maxColumnWidth = maxWidthShape.x + (maxWidthShape.w / 2)
+        maxColumnWidth = maxWidthShape.x + (maxWidthShape.width / 2)
         listOfRows[rowsCounter].column1Ratio = maxColumnWidth / imageWidth
         listOfRows[rowsCounter].column2Ratio = 1 - listOfRows[rowsCounter].column1Ratio
+    else:
+        maxColumnWidth = maxWidthShape.x + (maxWidthShape.width / 2)
+        listOfRows[rowsCounter].column2Ratio = maxColumnWidth / imageWidth
+        listOfRows[rowsCounter].column1Ratio = 1 - listOfRows[rowsCounter].column2Ratio
 
 
 # Appending each shape to their belong column
@@ -156,7 +171,7 @@ for rowsCounter in range(len(listOfRows)):
             listOfRows[rowsCounter].shapesPerRow[shapes].widthRatio = shapeWidthRatio
 
             # Assigning shape height ratio
-            shapeHeightRatio = listOfRows[rowsCounter].shapesPerRow[shapeAllignment].height / listOfRows[rowsCounter].height
+            shapeHeightRatio = listOfRows[rowsCounter].shapesPerRow[shapes].height / listOfRows[rowsCounter].height
             listOfRows[rowsCounter].shapesPerRow[shapes].heightRatio = shapeHeightRatio
 
             # Assigning shape allignment
@@ -164,7 +179,7 @@ for rowsCounter in range(len(listOfRows)):
             if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
             else:
-                listOfRows[rowsCounter].shapesPerRow[shapes] = "RIGHT"
+                listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
 
         else:
             listOfRows[rowsCounter].column2Shapes.append(listOfRows[rowsCounter].shapesPerRow[shapes])
@@ -174,13 +189,16 @@ for rowsCounter in range(len(listOfRows)):
             listOfRows[rowsCounter].shapesPerRow[shapes].widthRatio = shapeWidthRatio
 
             # Assigning shape height ratio
-            shapeHeightRatio = listOfRows[rowsCounter].shapesPerRow[shapeAllignment].height / listOfRows[rowsCounter].height
+            shapeHeightRatio = listOfRows[rowsCounter].shapesPerRow[shapes].height / listOfRows[rowsCounter].height
             listOfRows[rowsCounter].shapesPerRow[shapes].heightRatio = shapeHeightRatio
 
             # Assigning shape allignment
-            shapeAllignment = (listOfRows[rowsCounter].column1Ratio * imageWidth) / 2
+            shapeAllignment = (listOfRows[rowsCounter].column2Ratio * imageWidth) / 2
             if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
             else:
-                listOfRows[rowsCounter].shapesPerRow[shapes] = "RIGHT"
+                listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
+
+cv.waitKey(0)
+cv.destroyAllWindows()
 
