@@ -135,10 +135,10 @@ def navBar(path):
     # for shape in other:
     #     cv2.drawContours(image,[shape],-1,(255,255,0),3)
 
-    for rect in rectangles:
-        cv2.drawContours(image,[rect.approx],-1,(255,0,0),3)
-    for line in lines:
-        cv2.drawContours(image,[line],-1,(0,255,0),3)
+    # for rect in rectangles:
+    #     cv2.drawContours(image,[rect.approx],-1,(255,0,0),3)
+    # for line in lines:
+    #     cv2.drawContours(image,[line],-1,(0,255,0),3)
 
 
     rectangles = cleanDuplicatedRectangles(rectangles)
@@ -152,5 +152,5 @@ def navBar(path):
             navbars.append(rect)
             cv2.drawContours(image,[rect],-1,(0,0,255),3)
 
-    #cv2.imshow('navbar', image)
+    cv2.imshow('navbar', image)
     return navbars

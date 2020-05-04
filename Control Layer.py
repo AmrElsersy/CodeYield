@@ -5,13 +5,13 @@ from cross_circle import detectIcon
 from LabelBar import labelBarDetection
 from LabelDetection import labelDetection
 
-path = "data/test4.jpg"
+path = "data/all.png"
 img = cv.imread(path)
 imageHeight, imageWidth, imageChannels = img.shape
 print(imageHeight,imageWidth)
 
 # Tuning Parameters
-rowMarginBetweenShapes = 0.33*imageHeight
+rowMarginBetweenShapes = 0.1*imageHeight
 colMarginXPoint = int(imageWidth / 2)
 noOfColumnsPerRow = 2
 
@@ -43,40 +43,38 @@ class HtmlRow:
 shapesList = []
 listOfRows = []
 
+cv.imshow('main', img)
+
 # Retrieving labels
-text = []
 text = labelDetection(path)
 for iterator in range(len(text)):
     x,y,w,h = cv.boundingRect(text[iterator])
-    temporaryShape = Shape("TEXT", x + w / 2, abs(y - h / 2), w, h, 0)
+    temporaryShape = Shape("TEXT", x + w / 2, y + h / 2, w, h, 0)
     shapesList.append(temporaryShape)
 
 # Retrieving labelBar
-labelBar = []
 labelBar = labelBarDetection(path)
 for iterator in range(len(labelBar)):
     x, y, w, h = cv.boundingRect(labelBar[iterator])
-    temporaryShape = Shape("LABEL", x + w / 2, abs(y - h / 2), w, h, 0)
+    temporaryShape = Shape("LABEL", x + w / 2, y + h / 2, w, h, 0)
     shapesList.append(temporaryShape)
 
 # Retrieving images
-image = []
 image = detectImage(path)
 for iterator in range(len(image)):
     x, y, w, h = cv.boundingRect(image[iterator])
-    temporaryShape = Shape("IMAGE", x + w / 2, abs(y - h / 2), w, h, 0)
+    temporaryShape = Shape("IMAGE", x + w / 2, y + h / 2, w, h, 0)
     shapesList.append(temporaryShape)
 
 # Retrieving navigation bar
-nav = []
 nav = navBar(path)
+print(nav)
 for iterator in range(len(nav)):
     x, y, w, h = cv.boundingRect(nav[iterator])
-    temporaryShape = Shape("NAV", x + w / 2, abs(y - h / 2), w, h, 0)
+    temporaryShape = Shape("NAV", x + w / 2, y + h / 2, w, h, 0)
     shapesList.append(temporaryShape)
 
 # Retrieving icons
-icon = []
 icon = detectIcon(path)
 for iterator in range(len(icon)):
     (x, y), rad = cv.minEnclosingCircle(icon[iterator])
@@ -107,6 +105,7 @@ def handlingRows():
                 temporaryRow = HtmlRow()
                 incrementRowFlag = False
             temporaryRow.shapesPerRow.append(shapesList[iterator + 1])
+            #shapesList.remove(shapesList[iterator+1])
         else:
             incrementRowFlag = True
             listOfRows.append(temporaryRow)
