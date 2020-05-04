@@ -42,5 +42,5 @@ def detectImage(path):
             n += 1
         else:
             n += 1
-
+    cv2.imshow('image',img)
     return  image_approx

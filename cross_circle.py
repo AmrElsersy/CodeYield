@@ -8,9 +8,9 @@ houghLineLength = 100
 houghLineGap = 10
 dilationIterations = 3
 erosionIterations = 2
-epsilonFactor = 0.025
+epsilonFactor = 0.03
 houghLineThickness = 2
-minContourArea = 2000
+minContourArea = 500
 
 
 def detectIcon(path):
@@ -31,11 +31,6 @@ def detectIcon(path):
 
     # Using probabilistic hough line transform to get clear & semi complete lines
     processingImg = dil.copy()
-    lines = cv.HoughLinesP(processingImg, 1, np.pi / 180, 100, minLineLength=houghLineLength, maxLineGap=houghLineGap)
-
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        cv.line(processingImg, (x1, y1), (x2, y2), (255, 255, 255), houghLineThickness)
 
     # Eroding to remove noise edges
     erode = cv.erode(processingImg, kernel, iterations=erosionIterations)
@@ -53,16 +48,16 @@ def detectIcon(path):
         #print(x, y, w, h)
         #print(len(approx))
         # Checking if it is a rectangle
-        if len(approx) > 7 and len(approx) < 10:
+        if len(approx) > 7 and len(approx) < 10 and cv.contourArea(cont) > minContourArea:
             (x, y), rad = cv.minEnclosingCircle(cont)
             center = (int(x), int(y))
             rad = int(rad)
-            img = cv.circle(img, center, rad, (255, 0, 0), 1)
+            img = cv.circle(img, center, rad, (0, 255, 0), 3)
             #print(x, y)
             iconsDetected.append(approx)
             dictionaryCounter += 1
 
-    cv.imshow('re',img)
+    cv.imshow('circle',img)
     return iconsDetected
 
 

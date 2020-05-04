@@ -11,27 +11,32 @@ dilationIterations = 3
 erosionIterations = 2
 epsilonFactor = 0.03
 houghLineThickness = 2
-minContourArea = 1000
+minContourArea = 2000
 minDiff_XPoints = 20
 
 def sortContours(contours):
 
-    proccessingContours = [[0 for i in range(2)] for j in range(4)]
+    proccessingContoursX = [[0 for i in range(2)] for j in range(4)]
 
     for ite in range(len(contours)):
-        proccessingContours[ite][0]= (contours[ite][0][0])
-        proccessingContours[ite][1]= (contours[ite][0][1])
+        proccessingContoursX[ite][0]= (contours[ite][0][0])
+        proccessingContoursX[ite][1]= (contours[ite][0][1])
+
+    proccessingContoursY = proccessingContoursX
     # Sorting founded contours by x-axis points
-    proccessingContours.sort(key=lambda x:x[0])
-    return proccessingContours
+    proccessingContoursX.sort(key=lambda x:x[0])
+
+    return proccessingContoursX
 
 def  filterContours(contours):
 
-    proccessingContours = [[0 for i in range(2)] for j in range(4)]
-    proccessingContours = sortContours(contours)
+    proccessingContoursX = [[0 for i in range(2)] for j in range(4)]
 
-    verticalLineDiff1 = abs(proccessingContours[1][0] - proccessingContours[0][0])
-    verticalLineDiff2 = abs(proccessingContours[3][0] - proccessingContours[2][0])
+
+    proccessingContoursX = sortContours(contours)
+
+    verticalLineDiff1 = abs(proccessingContoursX[1][0] - proccessingContoursX[0][0])
+    verticalLineDiff2 = abs(proccessingContoursX[3][0] - proccessingContoursX[2][0])
     # Checking if the rectangle edges aren't quite vertical or not
     if(verticalLineDiff1 > minDiff_XPoints or verticalLineDiff2 > minDiff_XPoints):
         return False
@@ -80,11 +85,10 @@ def labelBarDetection(path):
         # Checking if it is a rectangle
         if len(approx) == approxComparisonValue  and cv.contourArea(cont) > minContourArea and filterContours(approx) == True:
             if(hierarchy.ravel()[hierarchyCounter*4 + 2] == -1 ):
-                #print(hierarchy.ravel())
                 cv.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 detectedLabelBars.append(approx)
                 
         hierarchyCounter += 1
-    cv.imshow('rt', img)
+    cv.imshow('label', img)
     return detectedLabelBars
 

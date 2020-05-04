@@ -5,13 +5,13 @@ from cross_circle import detectIcon
 from LabelBar import labelBarDetection
 from LabelDetection import labelDetection
 
-path = "data/test5.png"
+path = "data/test4.jpg"
 img = cv.imread(path)
 imageHeight, imageWidth, imageChannels = img.shape
 print(imageHeight,imageWidth)
 
 # Tuning Parameters
-rowMarginBetweenShapes = 0.2*imageHeight
+rowMarginBetweenShapes = 0.33*imageHeight
 colMarginXPoint = int(imageWidth / 2)
 noOfColumnsPerRow = 2
 
@@ -76,22 +76,16 @@ for iterator in range(len(nav)):
     shapesList.append(temporaryShape)
 
 # Retrieving icons
-# icon = []
-# icon = detectIcon(path)
-# for iterator in range(len(icon)):
-#     (x, y), rad = cv.minEnclosingCircle(icon[iterator])
-#     temporaryShape = Shape("ICON", int(x), int(y), int(rad)*2, 0, int(rad))
-#     shapesList.append(temporaryShape)
-
-
-
+icon = []
+icon = detectIcon(path)
+for iterator in range(len(icon)):
+    (x, y), rad = cv.minEnclosingCircle(icon[iterator])
+    temporaryShape = Shape("ICON", int(x), int(y), int(rad)*2, 0, int(rad))
+    shapesList.append(temporaryShape)
 
 
 # Sorting by y-point
 shapesList = sorted(shapesList, key=lambda x: x.y, reverse=False)
-
-# for i in range(len(shapesList)):
-#     print(shapesList[i].name,shapesList[i].y)
 
 
 def handlingRows():
@@ -125,17 +119,24 @@ def handlingRows():
 
     #print(len(listOfRows[0].shapesPerRow))
 
+    # Calc. Each row height
+    # for rowsCounter in range(len(listOfRows)):
+    #
+    #     for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)):
+    #         endYPoint = max(endYPoint, listOfRows[rowsCounter].shapesPerRow[shapes].y +  (listOfRows[rowsCounter].shapesPerRow[shapes].height / 2))
+    #
+    #     listOfRows[rowsCounter].height = endYPoint - startYPoint
+    #     startYPoint = endYPoint
+
     for rowsCounter in range(len(listOfRows)):
+        # Accessing last element of list to retrieve maximum-y point shape that will represent the height of each row
+        listOfRows[rowsCounter].height = listOfRows[rowsCounter].shapesPerRow[-1].y +  listOfRows[rowsCounter].shapesPerRow[-1].height / 2
+        print('ROW Height',listOfRows[rowsCounter].height)
 
-        for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)):
-            endYPoint = max(endYPoint, listOfRows[rowsCounter].shapesPerRow[shapes].y +  (listOfRows[rowsCounter].shapesPerRow[shapes].height / 2))
-
-        listOfRows[rowsCounter].height = endYPoint - startYPoint
-        startYPoint = endYPoint
 
 handlingRows()
 
-print(len(shapesList))
+#print(len(shapesList))
 #print(len(listOfRows))
 #print(listOfRows[0].height)
 
@@ -159,7 +160,7 @@ for rowsCounter in range(len(listOfRows)):
         listOfRows[rowsCounter].column2Ratio = maxColumnWidth / imageWidth
         listOfRows[rowsCounter].column1Ratio = 1 - listOfRows[rowsCounter].column2Ratio
 
-print(listOfRows[1].height)
+#print(listOfRows[1].height)
 # Appending each shape to their belong column
 for rowsCounter in range(len(listOfRows)):
 

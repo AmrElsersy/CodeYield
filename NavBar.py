@@ -152,5 +152,5 @@ def navBar(path):
             navbars.append(rect)
             cv2.drawContours(image,[rect],-1,(0,0,255),3)
 
-    cv2.imshow('x', image)
+    #cv2.imshow('navbar', image)
     return navbars
