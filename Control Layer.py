@@ -149,12 +149,13 @@ for rowsCounter in range(len(listOfRows)):
         maxColumnWidth = maxWidthShape.x + (maxWidthShape.width / 2)
         listOfRows[rowsCounter].column1Ratio = maxColumnWidth / imageWidth
         listOfRows[rowsCounter].column2Ratio = 1 - listOfRows[rowsCounter].column1Ratio
+    # Fix else condition
     else:
-        maxColumnWidth = maxWidthShape.x + (maxWidthShape.width / 2)
-        listOfRows[rowsCounter].column2Ratio = maxColumnWidth / imageWidth
-        listOfRows[rowsCounter].column1Ratio = 1 - listOfRows[rowsCounter].column2Ratio
+        maxColumnWidth = abs( maxWidthShape.x - (maxWidthShape.width / 2) )
+        listOfRows[rowsCounter].column1Ratio = maxColumnWidth / imageWidth
+        listOfRows[rowsCounter].column2Ratio = 1 - listOfRows[rowsCounter].column1Ratio
 
-#print(listOfRows[1].height)
+
 # Appending each shape to their belong column
 for rowsCounter in range(len(listOfRows)):
 
@@ -162,6 +163,7 @@ for rowsCounter in range(len(listOfRows)):
         # Checking if the shape lies either in the left column or right one
         if listOfRows[rowsCounter].shapesPerRow[shapes].x <= (listOfRows[rowsCounter].column1Ratio * imageWidth):
             listOfRows[rowsCounter].column1Shapes.append(listOfRows[rowsCounter].shapesPerRow[shapes])
+
             # Assigning shape width ratio
             shapeWidthRatio = listOfRows[rowsCounter].shapesPerRow[shapes].width / (listOfRows[rowsCounter].column1Ratio * imageWidth)
             listOfRows[rowsCounter].shapesPerRow[shapes].widthRatio = shapeWidthRatio
@@ -180,8 +182,7 @@ for rowsCounter in range(len(listOfRows)):
         else:
             listOfRows[rowsCounter].column2Shapes.append(listOfRows[rowsCounter].shapesPerRow[shapes])
             # Assigning shape width ratios
-            shapeWidthRatio = listOfRows[rowsCounter].shapesPerRow[shapes].width / (
-                        listOfRows[rowsCounter].column1Ratio * imageWidth)
+            shapeWidthRatio = listOfRows[rowsCounter].shapesPerRow[shapes].width / (listOfRows[rowsCounter].column2Ratio * imageWidth)
             listOfRows[rowsCounter].shapesPerRow[shapes].widthRatio = shapeWidthRatio
 
             # Assigning shape height ratio
