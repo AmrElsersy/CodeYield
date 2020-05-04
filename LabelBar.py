@@ -11,10 +11,8 @@ dilationIterations = 3
 erosionIterations = 2
 epsilonFactor = 0.03
 houghLineThickness = 2
-minContourArea = 2000
+minContourArea = 1000
 minDiff_XPoints = 20
-
-img = cv.imread('data/test.png', cv.IMREAD_COLOR)
 
 def sortContours(contours):
 
@@ -32,18 +30,18 @@ def  filterContours(contours):
     proccessingContours = [[0 for i in range(2)] for j in range(4)]
     proccessingContours = sortContours(contours)
 
-    verticalLineDiff1 = proccessingContours[1][0] - proccessingContours[0][0]
-    verticalLineDiff2 = proccessingContours[3][0] - proccessingContours[2][0]
+    verticalLineDiff1 = abs(proccessingContours[1][0] - proccessingContours[0][0])
+    verticalLineDiff2 = abs(proccessingContours[3][0] - proccessingContours[2][0])
     # Checking if the rectangle edges aren't quite vertical or not
     if(verticalLineDiff1 > minDiff_XPoints or verticalLineDiff2 > minDiff_XPoints):
         return False
     else:
         return True
 
-def labelBarDetection(img):
+def labelBarDetection(path):
 
     # Image Preparation & Kernel defintion of 5*5 Matrix
-
+    img = cv.imread(path)
     grayImg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     kernel = np.ones((3, 3), np.uint8)
 
@@ -87,8 +85,6 @@ def labelBarDetection(img):
                 detectedLabelBars.append(approx)
                 
         hierarchyCounter += 1
-
+    cv.imshow('rt', img)
     return detectedLabelBars
 
-cv.waitKey(0)
-cv.destroyAllWindows()

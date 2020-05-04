@@ -13,12 +13,10 @@ houghLineThickness = 2
 minContourArea = 2000
 
 
-img = cv.imread('dhdh.jpeg', cv.IMREAD_COLOR)
-
-def labelBarDetection(img):
+def detectIcon(path):
 
     # Image Preparation & Kernel defintion of 5*5 Matrix
-
+    img = cv.imread(path)
     grayImg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     kernel = np.ones((3, 3), np.uint8)
 
@@ -44,7 +42,7 @@ def labelBarDetection(img):
 
     # Finding contours
     contours, hierarchy = cv.findContours(processingImg, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    iconsDetected = {}
+    iconsDetected = []
     dictionaryCounter = 0
     # Drawing contours
     for cont in contours:
@@ -56,30 +54,15 @@ def labelBarDetection(img):
         #print(len(approx))
         # Checking if it is a rectangle
         if len(approx) > 7 and len(approx) < 10:
-            cv.putText(img, "Circle", (x, y), cv.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
             (x, y), rad = cv.minEnclosingCircle(cont)
             center = (int(x), int(y))
             rad = int(rad)
             img = cv.circle(img, center, rad, (255, 0, 0), 1)
             #print(x, y)
-            iconsDetected[dictionaryCounter]={center,rad}
+            iconsDetected.append(approx)
             dictionaryCounter += 1
 
-    titles = ['Orignal','Gray','Canny','Processing','dil']
-    images = [img,grayImg,edges,processingImg,dil]
-
-    rows = 2
-    columns = 4
-    iterations = len(images)
-    for ite in range(iterations):
-        plt.subplot(rows,columns, ite+1 ), plt.imshow(images[ite])
-        plt.title(titles[ite])
-    plt.show()
-
+    cv.imshow('re',img)
     return iconsDetected
 
 
-
-y={}
-y= labelBarDetection(img)
-print(y)

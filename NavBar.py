@@ -1,9 +1,7 @@
 import cv2
 import numpy as np
 
-# path = "all.png"
-# path = "test.png"
-path = "ayman.jpeg"
+
 
 # ========== Tracing ================
 threshold = 150 # 150 tuned
@@ -16,31 +14,8 @@ sigma = 33
 window_w = 1280
 window_h = 720
 
-def setSigma(x):
-    global sigma
-    sigma = x
-    navBar(path) 
-def setClean(x):
-    global clean
-    clean = x
-    navBar(path)
-def setRectRatio(x):
-    if x < 1 : 
-        return
-    global rect_ratio
-    rect_ratio = x
-    navBar(path)
-def setThreshold(x):
-    global threshold
-    threshold = x
-    navBar(path)
 
-cv2.namedWindow("window")
 
-cv2.createTrackbar("thresold","window",threshold,255,setThreshold)
-cv2.createTrackbar("ratio","window",rect_ratio,10,setRectRatio)
-cv2.createTrackbar("clean","window",clean,100,setClean)
-cv2.createTrackbar("sigma","window",sigma,100,setSigma)
 # =============================================
 class Rect():
     def __init__(self,aprox,i,firstChiled):
@@ -48,7 +23,7 @@ class Rect():
         self.i = i 
         self.firstChild = firstChiled
     def print(self):
-        print(self.i,self.firstChild)
+        pass
         # print(self.approx)
         # print("###")
 
@@ -58,7 +33,7 @@ def sortByX(rect):
     
 
 def cleanDuplicatedRectangles(rectangles):
-    print("=========================")
+
     for rect in rectangles:
         rect.print()
 
@@ -74,7 +49,7 @@ def cleanDuplicatedRectangles(rectangles):
             elif rectangle.i == rect.firstChild:
                 del rectangles[i]
                 break
-    print("................")
+
     for rect in rectangles:
         rect.print()
     # return list of contours
@@ -107,7 +82,7 @@ def navBar(path):
     image = cv2.resize(image,(window_w,window_h))
     grayImage = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
-    cv2.imshow("window",image)
+
 
     navbars = []
     rectangles = []
@@ -124,15 +99,14 @@ def navBar(path):
     kernel = np.ones((3,3),np.uint8)
     dilate = cv2.dilate(edges,kernel,iterations=2)
     # ============ Contours ==================
-    _ , contours , hierarchy  = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    contours , hierarchy  = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     # sort the contours by area
     # contours = sorted(contours, key = cv2.contourArea, reverse = True) 
-    print(hierarchy.ravel())
-    print(len(contours))
+
     for i , cnt in enumerate(contours):
         len_cnt = cv2.arcLength(cnt,True)
         area_cnt = cv2.contourArea(cnt)      
-        print(i)
+
         # skip small curves and the biggest curves
         if(len_cnt < 50) or (len_cnt > 2 * window_w):
             continue
@@ -166,9 +140,9 @@ def navBar(path):
     for line in lines:
         cv2.drawContours(image,[line],-1,(0,255,0),3)
 
-    print(len(rectangles),len(lines))
+
     rectangles = cleanDuplicatedRectangles(rectangles)
-    print("after Cleaning",len(rectangles))
+
     
     # check if the rectangle have 3 lines 
     for rect in rectangles :
@@ -178,12 +152,5 @@ def navBar(path):
             navbars.append(rect)
             cv2.drawContours(image,[rect],-1,(0,0,255),3)
 
-    # cv2.imshow("thresh",thresh)
-    # cv2.imshow("dialate",dilate)
-    cv2.imshow("window",image)
-
+    cv2.imshow('x', image)
     return navbars
-
-print( "solution\n",navBar(path) )
-cv2.waitKey(0)
-cv2.destroyAllWindows()

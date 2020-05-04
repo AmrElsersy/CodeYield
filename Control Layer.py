@@ -5,13 +5,13 @@ from cross_circle import detectIcon
 from LabelBar import labelBarDetection
 from LabelDetection import labelDetection
 
-path = "data/all.png"
+path = "data/test5.png"
 img = cv.imread(path)
 imageHeight, imageWidth, imageChannels = img.shape
 print(imageHeight,imageWidth)
 
 # Tuning Parameters
-rowMarginBetweenShapes = 0.15*imageHeight
+rowMarginBetweenShapes = 0.2*imageHeight
 colMarginXPoint = int(imageWidth / 2)
 noOfColumnsPerRow = 2
 
@@ -76,12 +76,12 @@ for iterator in range(len(nav)):
     shapesList.append(temporaryShape)
 
 # Retrieving icons
-icon = []
-icon = detectIcon(path)
-for iterator in range(len(icon)):
-    (x, y), rad = cv.minEnclosingCircle(icon[iterator])
-    temporaryShape = Shape("ICON", int(x), int(y), int(rad)*2, 0, int(rad))
-    shapesList.append(temporaryShape)
+# icon = []
+# icon = detectIcon(path)
+# for iterator in range(len(icon)):
+#     (x, y), rad = cv.minEnclosingCircle(icon[iterator])
+#     temporaryShape = Shape("ICON", int(x), int(y), int(rad)*2, 0, int(rad))
+#     shapesList.append(temporaryShape)
 
 
 
@@ -135,6 +135,7 @@ def handlingRows():
 
 handlingRows()
 
+print(len(shapesList))
 #print(len(listOfRows))
 #print(listOfRows[0].height)
 
@@ -158,7 +159,7 @@ for rowsCounter in range(len(listOfRows)):
         listOfRows[rowsCounter].column2Ratio = maxColumnWidth / imageWidth
         listOfRows[rowsCounter].column1Ratio = 1 - listOfRows[rowsCounter].column2Ratio
 
-
+print(listOfRows[1].height)
 # Appending each shape to their belong column
 for rowsCounter in range(len(listOfRows)):
 
@@ -199,6 +200,18 @@ for rowsCounter in range(len(listOfRows)):
             else:
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
 
+
+for i in range(len(listOfRows)):
+
+    print('Column 1 Started')
+    for j in range(len(listOfRows[i].column1Shapes)):
+        print(listOfRows[i].column1Shapes[j].name)
+
+    print('Column 2 Started')
+    for k in range(len(listOfRows[i].column2Shapes)):
+        print(listOfRows[i].column2Shapes[k].name)
+    print('ROW Finished')
+
+
 cv.waitKey(0)
 cv.destroyAllWindows()
-
