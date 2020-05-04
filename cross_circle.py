@@ -8,17 +8,15 @@ houghLineLength = 100
 houghLineGap = 10
 dilationIterations = 3
 erosionIterations = 2
-epsilonFactor = 0.025
+epsilonFactor = 0.03
 houghLineThickness = 2
-minContourArea = 2000
+minContourArea = 500
 
 
-img = cv.imread('dhdh.jpeg', cv.IMREAD_COLOR)
-
-def labelBarDetection(img):
+def detectIcon(path):
 
     # Image Preparation & Kernel defintion of 5*5 Matrix
-
+    img = cv.imread(path)
     grayImg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     kernel = np.ones((3, 3), np.uint8)
 
@@ -33,18 +31,13 @@ def labelBarDetection(img):
 
     # Using probabilistic hough line transform to get clear & semi complete lines
     processingImg = dil.copy()
-    lines = cv.HoughLinesP(processingImg, 1, np.pi / 180, 100, minLineLength=houghLineLength, maxLineGap=houghLineGap)
-
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        cv.line(processingImg, (x1, y1), (x2, y2), (255, 255, 255), houghLineThickness)
 
     # Eroding to remove noise edges
     erode = cv.erode(processingImg, kernel, iterations=erosionIterations)
 
     # Finding contours
     contours, hierarchy = cv.findContours(processingImg, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    iconsDetected = {}
+    iconsDetected = []
     dictionaryCounter = 0
     # Drawing contours
     for cont in contours:
@@ -55,31 +48,16 @@ def labelBarDetection(img):
         #print(x, y, w, h)
         #print(len(approx))
         # Checking if it is a rectangle
-        if len(approx) > 7 and len(approx) < 10:
-            cv.putText(img, "Circle", (x, y), cv.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0))
+        if len(approx) > 7 and len(approx) < 10 and cv.contourArea(cont) > minContourArea:
             (x, y), rad = cv.minEnclosingCircle(cont)
             center = (int(x), int(y))
             rad = int(rad)
-            img = cv.circle(img, center, rad, (255, 0, 0), 1)
+            img = cv.circle(img, center, rad, (0, 255, 0), 3)
             #print(x, y)
-            iconsDetected[dictionaryCounter]={center,rad}
+            iconsDetected.append(approx)
             dictionaryCounter += 1
 
-    titles = ['Orignal','Gray','Canny','Processing','dil']
-    images = [img,grayImg,edges,processingImg,dil]
-
-    rows = 2
-    columns = 4
-    iterations = len(images)
-    for ite in range(iterations):
-        plt.subplot(rows,columns, ite+1 ), plt.imshow(images[ite])
-        plt.title(titles[ite])
-    plt.show()
-
+    cv.imshow('circle',img)
     return iconsDetected
 
 
-
-y={}
-y= labelBarDetection(img)
-print(y)

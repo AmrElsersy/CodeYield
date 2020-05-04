@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import cv2
 import numpy as np
 
-def labelDetection(scrImagePath = 'zigzag2.jpeg'):
+def labelDetection(scrImagePath):
     sigma = 0.33  # Canny's formula
     dilationIterations = 1
     epsilonFactor = 0.03
@@ -25,13 +25,14 @@ def labelDetection(scrImagePath = 'zigzag2.jpeg'):
     # dilate = cv2.dilate(edges, kernel, iterations=2)
     # Apply Threshold
     contours, hierarchy = cv2.findContours(edges,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    hierarchyCounter = 0
     # print('Contour len'+str(len(contours)))
     #A loop over contours to check which of them has lines that lies within the zigzag range
     for c in contours:
         approx = cv2.approxPolyDP(c, 0.01 * cv2.arcLength(c,True),True)
         x = approx.ravel()[0]
         y = approx.ravel()[1]
-        if len(approx) >= 20 and len(approx)<35:
+        if len(approx) >= 21 and len(approx)<40 and hierarchy.ravel()[hierarchyCounter*4 + 3] == -1:
             cv2.drawContours(img,c,-1,(0,255,0),10)
 
             x,y,w,h = cv2.boundingRect(approx)
@@ -41,26 +42,11 @@ def labelDetection(scrImagePath = 'zigzag2.jpeg'):
                          'w':w,
                          'h':h}
             # print(dictionary)
-            detectedLabels.append(c)
+            print(len(approx))
+            detectedLabels.append(approx)
             # print('The Value :'+str(len(approx)))
+        hierarchyCounter += 1
 
-
-    # cv2.drawContours(img,contours,-1,(0,255,0),10)
-    _,erod = cv2.threshold(erod,100,255,cv2.THRESH_BINARY_INV)
-    titles = ['Image','After Gray Effetct','edges','dil','erod']
-
-    images = [img,img_gray,edges,dil,erod]
-
-
-    for i in range(len(images)):
-        plt.subplot(2, 3, i+1), plt.imshow(images[i], 'gray')
-        plt.title(titles[i])
-        plt.xticks([]),plt.yticks([])
-
-    plt.show()
-    cv2.imshow('Detected Image',img)
+    #cv2.imshow('text',img)
     return detectedLabels
-print(len(labelDetection('zigzag.jpeg')))
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
