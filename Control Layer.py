@@ -11,7 +11,7 @@ imageHeight, imageWidth, imageChannels = img.shape
 print(imageHeight,imageWidth)
 
 # Tuning Parameters
-rowMarginBetweenShapes = 0.1*imageHeight
+rowMarginBetweenShapes = 0.2*imageHeight
 colMarginXPoint = int(imageWidth / 2)
 noOfColumnsPerRow = 2
 
@@ -97,26 +97,17 @@ def getMaxHeightPerRow(ROW):
 
 
 def handlingRows():
-
-    incrementRowFlag = False
     temporaryRow = HtmlRow()
 
     # 1st minimum-y shape is inserted into 1st row
     temporaryRow.shapesPerRow.append(shapesList[0])
 
-    # print(temporaryRow.shapesPerRow[0].height)
-
     for iterator in range(len(shapesList) - 1):
         diff = abs(shapesList[iterator].y - shapesList[iterator + 1].y)
         if diff < rowMarginBetweenShapes:
-            # Calc. height of each row
-            #if incrementRowFlag == True:
-                # Creating a new row
-                #incrementRowFlag = False
             temporaryRow.shapesPerRow.append(shapesList[iterator + 1])
-            #shapesList.remove(shapesList[iterator+1])
+
         else:
-            #incrementRowFlag = True
             listOfRows.append(temporaryRow)
             temporaryRow = HtmlRow()
             temporaryRow.shapesPerRow.append(shapesList[iterator+1])
@@ -149,7 +140,7 @@ for rowsCounter in range(len(listOfRows)):
         maxColumnWidth = maxWidthShape.x + (maxWidthShape.width / 2)
         listOfRows[rowsCounter].column1Ratio = maxColumnWidth / imageWidth
         listOfRows[rowsCounter].column2Ratio = 1 - listOfRows[rowsCounter].column1Ratio
-    # Fix else condition
+
     else:
         maxColumnWidth = abs( maxWidthShape.x - (maxWidthShape.width / 2) )
         listOfRows[rowsCounter].column1Ratio = maxColumnWidth / imageWidth
@@ -173,9 +164,13 @@ for rowsCounter in range(len(listOfRows)):
             listOfRows[rowsCounter].shapesPerRow[shapes].heightRatio = shapeHeightRatio
 
             # Assigning shape allignment
-            shapeAllignment = (listOfRows[rowsCounter].column1Ratio * imageWidth) / 2
+            shapeAllignment = (listOfRows[rowsCounter].column1Ratio * imageWidth) / 3
             if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
+
+            elif listOfRows[rowsCounter].shapesPerRow[shapes].x <= 2*shapeAllignment:
+                listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "Center"
+
             else:
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
 
@@ -190,9 +185,14 @@ for rowsCounter in range(len(listOfRows)):
             listOfRows[rowsCounter].shapesPerRow[shapes].heightRatio = shapeHeightRatio
 
             # Assigning shape allignment
-            shapeAllignment = (listOfRows[rowsCounter].column2Ratio * imageWidth) / 2
-            if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
+            column1XPoint = (listOfRows[rowsCounter].column1Ratio * imageWidth)
+            shapeAllignment = (imageWidth - column1XPoint) / 3
+            if listOfRows[rowsCounter].shapesPerRow[shapes].x <= (shapeAllignment + column1XPoint):
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
+
+            elif listOfRows[rowsCounter].shapesPerRow[shapes].x <= (2*shapeAllignment + column1XPoint):
+                listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "Center"
+
             else:
                 listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
 
