@@ -71,6 +71,7 @@ nav = navBar(path)
 print(nav)
 for iterator in range(len(nav)):
     x, y, w, h = cv.boundingRect(nav[iterator])
+
     temporaryShape = Shape("NAV", x + w / 2, y + h / 2, w, h, 0)
     shapesList.append(temporaryShape)
 
@@ -78,12 +79,21 @@ for iterator in range(len(nav)):
 icon = detectIcon(path)
 for iterator in range(len(icon)):
     (x, y), rad = cv.minEnclosingCircle(icon[iterator])
-    temporaryShape = Shape("ICON", int(x), int(y), int(rad)*2, 0, int(rad))
+    temporaryShape = Shape("ICON", int(x), int(y), int(rad)*2, int(rad)*2, int(rad))
     shapesList.append(temporaryShape)
 
 
 # Sorting by y-point
 shapesList = sorted(shapesList, key=lambda x: x.y, reverse=False)
+
+
+# Calc. Each row height
+def getMaxHeightPerRow(ROW):
+    maxHeight = 0
+    for ite in range(len(ROW.shapesPerRow)):
+            maxHeight = max(maxHeight, ROW.shapesPerRow[ite].height)
+
+    return maxHeight
 
 
 def handlingRows():
@@ -100,44 +110,29 @@ def handlingRows():
         diff = abs(shapesList[iterator].y - shapesList[iterator + 1].y)
         if diff < rowMarginBetweenShapes:
             # Calc. height of each row
-            if incrementRowFlag == True:
+            #if incrementRowFlag == True:
                 # Creating a new row
-                temporaryRow = HtmlRow()
-                incrementRowFlag = False
+                #incrementRowFlag = False
             temporaryRow.shapesPerRow.append(shapesList[iterator + 1])
             #shapesList.remove(shapesList[iterator+1])
         else:
-            incrementRowFlag = True
+            #incrementRowFlag = True
             listOfRows.append(temporaryRow)
+            temporaryRow = HtmlRow()
+            temporaryRow.shapesPerRow.append(shapesList[iterator+1])
+
 
     # Appending last row elements
     listOfRows.append(temporaryRow)
 
-    startYPoint = 0
-    endYPoint = 0
-
-    #print(len(listOfRows[0].shapesPerRow))
-
-    # Calc. Each row height
-    # for rowsCounter in range(len(listOfRows)):
-    #
-    #     for shapes in range(len(listOfRows[rowsCounter].shapesPerRow)):
-    #         endYPoint = max(endYPoint, listOfRows[rowsCounter].shapesPerRow[shapes].y +  (listOfRows[rowsCounter].shapesPerRow[shapes].height / 2))
-    #
-    #     listOfRows[rowsCounter].height = endYPoint - startYPoint
-    #     startYPoint = endYPoint
-
-    for rowsCounter in range(len(listOfRows)):
-        # Accessing last element of list to retrieve maximum-y point shape that will represent the height of each row
-        listOfRows[rowsCounter].height = listOfRows[rowsCounter].shapesPerRow[-1].y +  listOfRows[rowsCounter].shapesPerRow[-1].height / 2
-        print('ROW Height',listOfRows[rowsCounter].height)
+    # Retrieving max-height per row
+    for rows in range(len(listOfRows)):
+        listOfRows[rows].height = getMaxHeightPerRow(listOfRows[rows])
+        #print('ROW Height',listOfRows[rows].height)
 
 
 handlingRows()
 
-#print(len(shapesList))
-#print(len(listOfRows))
-#print(listOfRows[0].height)
 
 # Retrieving maximum width of a shape for each row & calc. ratio of columns
 for rowsCounter in range(len(listOfRows)):
@@ -215,3 +210,4 @@ for i in range(len(listOfRows)):
 
 cv.waitKey(0)
 cv.destroyAllWindows()
+
