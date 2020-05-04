@@ -5,7 +5,7 @@ from cross_circle import detectIcon
 from LabelBar import labelBarDetection
 from LabelDetection import labelDetection
 
-path = "data/all.png"
+path = "data/test.png"
 img = cv.imread(path)
 imageHeight, imageWidth, imageChannels = img.shape
 print(imageHeight,imageWidth)
@@ -43,7 +43,7 @@ class HtmlRow:
 shapesList = []
 listOfRows = []
 
-cv.imshow('main', img)
+#cv.imshow('main', img)
 
 # Retrieving labels
 text = labelDetection(path)
@@ -68,7 +68,7 @@ for iterator in range(len(image)):
 
 # Retrieving navigation bar
 nav = navBar(path)
-print(nav)
+
 for iterator in range(len(nav)):
     x, y, w, h = cv.boundingRect(nav[iterator])
 
@@ -201,11 +201,11 @@ for i in range(len(listOfRows)):
 
     print('Column 1 Started')
     for j in range(len(listOfRows[i].column1Shapes)):
-        print(listOfRows[i].column1Shapes[j].name)
+        print(listOfRows[i].column1Shapes[j].name, ',', listOfRows[i].column1Shapes[j].allignment)
 
     print('Column 2 Started')
     for k in range(len(listOfRows[i].column2Shapes)):
-        print(listOfRows[i].column2Shapes[k].name)
+        print(listOfRows[i].column2Shapes[k].name, ',', listOfRows[i].column2Shapes[k].allignment)
     print('ROW Finished')
 
 
