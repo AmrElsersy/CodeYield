@@ -32,8 +32,10 @@ def labelDetection(scrImagePath = 'zigzag2.jpeg'):
         x = approx.ravel()[0]
         y = approx.ravel()[1]
         if len(approx) >= 20 and len(approx)<35:
-            # cv2.drawContours(img,c,-1,(0,255,0),10)
+            cv2.drawContours(img,c,-1,(0,255,0),10)
+
             x,y,w,h = cv2.boundingRect(approx)
+            img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),5)
             dictionary={ 'x':x,
                          'y':y,
                          'w':w,
@@ -56,9 +58,9 @@ def labelDetection(scrImagePath = 'zigzag2.jpeg'):
         plt.xticks([]),plt.yticks([])
 
     plt.show()
-    # cv2.imshow('Detected Image',img)
+    cv2.imshow('Detected Image',img)
     return detectedLabels
-print(labelDetection('zigzag.jpeg'))
+print(len(labelDetection('zigzag.jpeg')))
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
