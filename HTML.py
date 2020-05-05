@@ -1,4 +1,5 @@
 import math
+
 def convert100_to_col_12(width):
     if(((width*12)%100) > 50):
         return math.ceil(width*12/100)
@@ -16,8 +17,11 @@ class HTML_Generator():
     <title>Bootstrap</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">\n</head>\n'''
-        self.html_footer = '''\n</body>\n</html>'''
-        self.body = '''<body>\n'''
+        self.html_footer = '''</div>
+        \n</body>\n</html>'''
+        self.body = '''<body style="width:100wh;  height:100vh;">\n
+<div class="container h-100">
+            '''
 
     def addRow(self, rowContent):
         self.body += rowContent
@@ -27,13 +31,12 @@ class HTML_Generator():
 
 
     def concatinateHTML(self):
-        self.body = self.html_header + self.body + self.html_footer
         return self.html_header + self.body + self.html_footer
 
 
 class Row():
     def __init__(self,height):
-        self.div_openTag = '''\n<div class="row" style="width: 100%; height="{}"">\n\t'''.format(height)
+        self.div_openTag = '''\n<div class="row" style="width:100%; height:{}% ">\n\t'''.format(height)
         self.div_closedTag = '''\n</div> '''
         self.content = ''' '''
         # print('New Row : '+self.div_openTag,self.content,self.div_closedTag)
@@ -42,8 +45,8 @@ class Row():
         self.content += columnContent
 
     def concatinateHTML(self):
-        self.content = self.div_openTag + self.content + self.div_closedTag
-        # return self.div_openTag + self.content + self.div_closedTag
+        # self.content = self.div_openTag + self.content + self.div_closedTag
+        return self.div_openTag + self.content + self.div_closedTag
 
 class Column():
     def __init__(self,Width):
@@ -54,29 +57,34 @@ class Column():
         # print('New Column :'+self.div_openTag,self.content,self.div_closedTag)
  
     def concatinateHTML(self):
-        self.content = self.div_openTag + self.content + self.div_closedTag
-        # return self.div_openTag + self.content + self.div_closedTag
+        return self.div_openTag + self.content + self.div_closedTag
 
     def addImage(self,width,height,alignment):
-        self.content += '''\n\t<div>\t
-        <img src="https://sekatandsipter.com/wp-content/uploads/2019/08/sekat-and-sipter-letter-webpix-1.jpg">         
-        </div>'''
+        self.content += '''
+        <img src="https://sekatandsipter.com/wp-content/uploads/2019/08/sekat-and-sipter-letter-webpix-1.jpg" style="width: {}%; height:{}%;">         
+            '''.format(width,height)
     
     def addTextInput(self,width,height,alignment):
-        self.content += '''\n\t<div>\t 
-        <input width="{}" height="{}" placeholder="Enter ..">
-        </div>'''.format(height,width)
-    
+        self.content += '''        
+        <div class="form-group" style="padding-top: 10px; width: {}%; height: {}%;">
+                <input type="text" class="form-control" placeholder="Enter Text" style=" width: 100%; height: 100%;">
+        </div>
+        '''.format(width,height)
+
+
     def addNavbar(self,width,height,alignment):
-        self.content += '''\n\t<div>\t
-        <navbar> </navbar>        
-        </div>'''
+        self.content += '''\n\t<div style=" width: {}%; height: {}%;>\t
+            asdasdasd
+        </div>'''.format(width,height)
 
     def addText(self,width,height,alignment):
-        self.content += '''\n\t<div>\t 
-        <text> Text </text> 
-        </div>'''
-
+        self.content += '''\n\t   <div  class="" style=" width: {}%; height: {}%; margin:auto; text-align: center;     
+        display: flex;
+        align-items: center;
+        justify-content: center;" >\t 
+        
+        <p> Lorem ipsum dolor </p> 
+        </div>'''.format(width,height)
 
 class Shape:
     def __init__(self, name, x, y, width, height, radius):
@@ -105,32 +113,49 @@ class HtmlRow:
     
     def print(self):
         print(self.column1Shapes,self.column2Shapes)
-row1 = HtmlRow()
-# row2 = HtmlRow()
-# create a new shape called image
-image = Shape("image",1,1,30,50,1)
-# create a new shape called textInput
-textInput = Shape("textInput",1,1,40,40,1)
-# create a new shape called navbar
-navBar = Shape("navbar",1,1,100,50,1)
-# create a new shape called text
-text = Shape("text",1,1,80,30,1)
 
-#Appended the shape image to column 1 in row 1
-row1.column1Shapes.append(image)
-#Appended the shape image to column 1 in row 1
-row1.column1Shapes.append(textInput)
-
-#Appended the shape image to column 2 in row 1
-row1.column2Shapes.append(image)
-#Appended the shape image to column 2 in row 1
-row1.column2Shapes.append(text)
-row1.height = 50
-row1.column1Ratio = 90
-row1.column2Ratio = 10
 
 listOfRows = []
-listOfRows.append(row1)
+
+row1 = HtmlRow()
+row2 = HtmlRow()
+row3 = HtmlRow()
+# ======= ROW 1 
+row1.height = 10
+row1.column1Ratio = 20
+row1.column2Ratio = 80
+
+navBar = Shape("navbar",1,1,100,50,1)
+row1.column1Shapes.append(navBar)
+# ======= ROW 2
+row2.height = 40
+row2.column1Ratio = 40
+row2.column2Ratio = 60
+
+image = Shape("image",1,1,100,80,1)
+text1 = Shape("text",1,1,40,20,1)
+text2 = Shape("text",1,1,80,80,1)
+
+row2.column1Shapes.append(text1)
+row2.column1Shapes.append(text2)
+
+row2.column2Shapes.append(image)
+
+# ======= ROW 3
+row3.height = 10
+row3.column1Ratio = 20
+row3.column2Ratio = 80
+
+text3 = Shape("text",1,1,100,100,1)
+textInput = Shape("textInput",1,1,100,100,1)
+
+row3.column1Shapes.append(text3)
+row3.column2Shapes.append(textInput)
+
+# listOfRows.append(row1)
+listOfRows.append(row2)
+listOfRows.append(row3)
+
 
 #testing the list of rows after adding elements
 # for row in listOfRows:
@@ -152,30 +177,31 @@ for row in listOfRows:
         elif(shape.name == 'textInput'):
             New_col1.addTextInput(shape.width,shape.height,'none')
         elif(shape.name == 'navbar'):
-            New_col1.addText(shape.width,shape.height,'none')
+            New_col1.addNavbar(shape.width,shape.height,'none')
         elif(shape.name == 'text'):
             New_col1.addText(shape.width,shape.height,'none')
+
     for shape in row.column2Shapes:
         if(shape.name == 'image'):
             New_col2.addImage(shape.width,shape.height,'none')
         elif(shape.name == 'textInput'):
             New_col2.addTextInput(shape.width,shape.height,'none')
         elif(shape.name == 'navbar'):
-            New_col2.addText(shape.width,shape.height,'none')
+            New_col2.addNavbar(shape.width,shape.height,'none')
         elif(shape.name == 'text'):
             New_col2.addText(shape.width,shape.height,'none')
-    New_col1.concatinateHTML()
-    New_col2.concatinateHTML()
-    New_row.addColumn(New_col1.content)
-    New_row.addColumn(New_col2.content)
+    
+    New_row.addColumn(New_col1.concatinateHTML())
+    New_row.addColumn(New_col2.concatinateHTML())
     # print(New_col1.content + New_col2.content)
     # print(New_row.content)
-    New_row.concatinateHTML()
-HTML_Page.addRow(New_row.content)
-HTML_Page.concatinateHTML()
-# HTML_Page.print()
+    
+    HTML_Page.addRow(New_row.concatinateHTML())
 
+
+html = HTML_Page.concatinateHTML()
+# HTML_Page.print()
 HTML_File = open('Index.html','w+')
-for line in HTML_Page.body:
+for line in html:
     HTML_File.write(line)
 print('Done')
