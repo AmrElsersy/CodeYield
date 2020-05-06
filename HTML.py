@@ -5,23 +5,30 @@ def convert100_to_col_12(width):
         return math.ceil(width*12/100)
     elif (((width*12)%100) < 50):
         return math.floor(width*12/100)
-    # return "col-" + str (int( (width/100)*12))
-#There was a problem with floating percentage, their sum would never equal 12 like 60 - 40
+
 
 class HTML_Generator():
     def __init__(self):
-        self.html_header = '''<!DOCTYPE html>\n<html>\n<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Bootstrap</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">\n</head>\n'''
+        self.html_header = '''<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Bootstrap</title>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        </head>        
+        '''
+
         self.html_footer = '''</div>
         \n</body>\n</html>'''
-        self.body = '''<body style="width:100wh;  height:100vh;">\n
-<div class="container h-100">
-            '''
+
+
+        self.body = '''<body style="width:100wh;  height:100vh;">
+        <div class="container-fluid h-100">
+        '''
 
     def addRow(self, rowContent):
         self.body += rowContent
@@ -29,14 +36,17 @@ class HTML_Generator():
     def print(self):
         print(self.body)
 
-
     def concatinateHTML(self):
         return self.html_header + self.body + self.html_footer
 
 
 class Row():
-    def __init__(self,height):
-        self.div_openTag = '''\n<div class="row" style="width:100%; height:{}% ">\n\t'''.format(height)
+    def __init__(self,height,row_num):
+        color = "white"
+        if row_num %2 != 0:
+            color = "#DCDCDC"
+
+        self.div_openTag = '''\n<div class="row" style="width:100%; height:{}% ; background-color:{}; ">\n\t'''.format(height,color)
         self.div_closedTag = '''\n</div> '''
         self.content = ''' '''
         # print('New Row : '+self.div_openTag,self.content,self.div_closedTag)
@@ -50,7 +60,7 @@ class Row():
 
 class Column():
     def __init__(self,Width):
-        self.div_openTag = '''\n<div class="col-{}" height="100%" >'''.format(convert100_to_col_12(Width))
+        self.div_openTag = '''\n<div class="col-md-{}" style="height:100%" >'''.format(convert100_to_col_12(Width))
         self.div_closedTag = '''\n</div>'''
         self.content = ''' '''
         self.width = Width 
@@ -59,10 +69,22 @@ class Column():
     def concatinateHTML(self):
         return self.div_openTag + self.content + self.div_closedTag
 
-    def addImage(self,width,height,alignment):
-        self.content += '''
-        <img src="https://sekatandsipter.com/wp-content/uploads/2019/08/sekat-and-sipter-letter-webpix-1.jpg" style="width: {}%; height:{}%;">         
+    def addImage(self,width,height,alignment,circle = False):
+
+        if circle:
+            self.content += '''
+            <div class="text-center" style="width: {}%; height:{}%;">
+            <img src="https://sekatandsipter.com/wp-content/uploads/2019/08/sekat-and-sipter-letter-webpix-1.jpg" style="width: 80%; height:80%;" class = "img-thumbnail img-circle">         
+            </div>            
             '''.format(width,height)
+        else:
+            self.content += '''
+            <div class="text-center" style="width: {}%; height:{}%;">
+            <img src="https://sekatandsipter.com/wp-content/uploads/2019/08/sekat-and-sipter-letter-webpix-1.jpg" style="width: 80%; height:80%;" class = "img-thumbnail">         
+            </div>            
+            '''.format(width,height)
+
+            
     
     def addTextInput(self,width,height,alignment):
         self.content += '''        
@@ -73,18 +95,40 @@ class Column():
 
 
     def addNavbar(self,width,height,alignment):
-        self.content += '''\n\t<div style=" width: {}%; height: {}%;>\t
-            asdasdasd
-        </div>'''.format(width,height)
+        # <div style="width:15%">
+        self.content += '''
+        <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>                        
+                    </button>
+                  </div>
+                  <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                      <li class="active"><a href="#">Home</a></li>
+                      <li><a href="#">Page 2</a></li>
+                      <li><a href="#">Page 3</a></li>
+                    </ul>
+                  </div>
+                </div>
+        </nav>
+        '''
+        # </div>
 
     def addText(self,width,height,alignment):
-        self.content += '''\n\t   <div  class="" style=" width: {}%; height: {}%; margin:auto; text-align: center;     
-        display: flex;
-        align-items: center;
-        justify-content: center;" >\t 
-        
-        <p> Lorem ipsum dolor </p> 
+
+        self.content += '''
+        <div  class="" style=" width: {}%; height: {}%; margin:auto; text-align: center;">
+        <h3> Lorem ipsum </h3> 
         </div>'''.format(width,height)
+
+        # <p> Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor</p> 
+        # display: flex;
+        # align-items: center;
+        # justify-content: center;
 
 class Shape:
     def __init__(self, name, x, y, width, height, radius):
@@ -120,60 +164,66 @@ listOfRows = []
 row1 = HtmlRow()
 row2 = HtmlRow()
 row3 = HtmlRow()
-# ======= ROW 1 
-row1.height = 10
-row1.column1Ratio = 20
-row1.column2Ratio = 80
+row4 = HtmlRow()
+row5 = HtmlRow()
 
 navBar = Shape("navbar",1,1,100,50,1)
+image = Shape("image",1,1,100,80,1)
+text = Shape("text",1,1,40,20,1)
+textInput = Shape("textInput",1,1,100,100,1)
+
+# ======= ROW 1 
+row1.height = 10
+row1.column1Ratio = 100
+row1.column2Ratio = 0
+
 row1.column1Shapes.append(navBar)
 # ======= ROW 2
-row2.height = 40
-row2.column1Ratio = 40
-row2.column2Ratio = 60
+row2.height = 20
+row2.column1Ratio = 50
+row2.column2Ratio = 50
 
-image = Shape("image",1,1,100,80,1)
-text1 = Shape("text",1,1,40,20,1)
-text2 = Shape("text",1,1,80,80,1)
-
-row2.column1Shapes.append(text1)
-row2.column1Shapes.append(text2)
-
+row2.column1Shapes.append(text)
 row2.column2Shapes.append(image)
 
 # ======= ROW 3
-row3.height = 10
-row3.column1Ratio = 20
-row3.column2Ratio = 80
+row3.height = 20
+row3.column1Ratio = 50
+row3.column2Ratio = 50
 
-text3 = Shape("text",1,1,100,100,1)
-textInput = Shape("textInput",1,1,100,100,1)
+row3.column2Shapes.append(text)
+row3.column1Shapes.append(image)
 
-row3.column1Shapes.append(text3)
-row3.column2Shapes.append(textInput)
+#======== ROW 4
+row4.height = 20
+row4.column1Ratio = 40
+row4.column2Ratio = 60
 
-# listOfRows.append(row1)
+name = Shape("text",1,1,40,20,1)
+email = Shape("text",1,1,40,20,1)
+row4.column1Shapes.append(name)
+row4.column1Shapes.append(email)
+row4.column2Shapes.append(textInput)
+row4.column2Shapes.append(textInput)
+
+
+
+listOfRows.append(row1)
 listOfRows.append(row2)
 listOfRows.append(row3)
+listOfRows.append(row4)
 
-
-#testing the list of rows after adding elements
-# for row in listOfRows:
-#     row.print()
-#     for shape in row.column1Shapes:
-#         print(shape.name)
-#     for shape in row.column2Shapes:
-#         print(shape.name)
+# =================================================================================
 
 HTML_Page = HTML_Generator()
 
-for row in listOfRows:
-    New_row = Row(row.height)
+for i,row in enumerate( listOfRows ):
+    New_row = Row(row.height,i)
     New_col1 = Column(row.column1Ratio)
     New_col2 = Column(row.column2Ratio)
     for shape in row.column1Shapes:
         if(shape.name == 'image'):
-            New_col1.addImage(shape.width,shape.height,'none')
+            New_col1.addImage(shape.width,shape.height,'none',True)
         elif(shape.name == 'textInput'):
             New_col1.addTextInput(shape.width,shape.height,'none')
         elif(shape.name == 'navbar'):
