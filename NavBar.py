@@ -42,7 +42,7 @@ def cleanDuplicatedRectangles(rectangles):
     # iterate over rectangles and check if one is parent of another so remove it 
     for i, rectangle in enumerate(rectangles):
         # it may be wrong as it may just skip i not start from it
-        for j,rect in enumerate (rectangles[i+1:]) :
+        for j,rect in enumerate (rectangles[i+1:]):
             if rectangle.firstChild == rect.i:
                 del rectangles[j]
                 break

@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import random
 from matplotlib import pyplot as plt
 
 # Tuning Parameters
@@ -9,7 +10,6 @@ houghLineGap = 10
 dilationIterations = 3
 erosionIterations = 2
 epsilonFactor = 0.03
-houghLineThickness = 2
 minContourArea = 500
 
 
@@ -38,24 +38,27 @@ def detectIcon(path):
     # Finding contours
     contours, hierarchy = cv.findContours(processingImg, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
     iconsDetected = []
-    dictionaryCounter = 0
+    hierarchyCounter = 0
     # Drawing contours
+
+
     for cont in contours:
         epsilon = epsilonFactor * cv.arcLength(cont, True)
         approx = cv.approxPolyDP(cont, epsilon, True)
 
-        x, y, w, h = cv.boundingRect(approx)
-        #print(x, y, w, h)
-        #print(len(approx))
+        #x, y, w, h = cv.boundingRect(approx)
+        #cv.drawContours(img,[cont], 0, (random.randint(0,255), random.randint(0,255), random.randint(0,255)), 5)
+
         # Checking if it is a rectangle
-        if len(approx) > 7 and len(approx) < 10 and cv.contourArea(cont) > minContourArea:
+        if len(approx) > 4 and len(approx) < 10 and (hierarchy[0][hierarchyCounter][2] !=-1) and cv.contourArea(cont) > minContourArea:
             (x, y), rad = cv.minEnclosingCircle(cont)
             center = (int(x), int(y))
             rad = int(rad)
-            img = cv.circle(img, center, rad, (0, 255, 0), 3)
+            img = cv.circle(img, center, rad, (0, 255, 0), 5)
             #print(x, y)
             iconsDetected.append(approx)
-            dictionaryCounter += 1
+
+        hierarchyCounter += 1
 
     cv.imshow('circle',img)
     return iconsDetected

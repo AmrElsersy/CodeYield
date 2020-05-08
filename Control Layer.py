@@ -5,16 +5,16 @@ from cross_circle import detectIcon
 from LabelBar import labelBarDetection
 from LabelDetection import labelDetection
 
-path = "data/test.png"
+
+path = "data/raye2_test.jpg"
 img = cv.imread(path)
 imageHeight, imageWidth, imageChannels = img.shape
 print(imageHeight,imageWidth)
 
 # Tuning Parameters
-rowMarginBetweenShapes = 0.2*imageHeight
+rowMarginBetweenShapes = 0.1*imageHeight
 colMarginXPoint = int(imageWidth / 2)
 noOfColumnsPerRow = 2
-
 
 class Shape:
     def __init__(self, name, x, y, width, height, radius):
@@ -42,8 +42,6 @@ class HtmlRow:
 
 shapesList = []
 listOfRows = []
-
-#cv.imshow('main', img)
 
 # Retrieving labels
 text = labelDetection(path)
@@ -206,8 +204,9 @@ for i in range(len(listOfRows)):
     print('Column 2 Started')
     for k in range(len(listOfRows[i].column2Shapes)):
         print(listOfRows[i].column2Shapes[k].name, ',', listOfRows[i].column2Shapes[k].allignment)
-    print('ROW Finished')
+    print('ROW' + str(i+1) + 'Finished')
 
+    print('ROW Height' + str(i+1) ,listOfRows[i].height)
 
 cv.waitKey(0)
 cv.destroyAllWindows()

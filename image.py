@@ -23,6 +23,7 @@ def detectImage(path):
     imageParameter = []
     n = 0
     image_approx = []
+
     while n < len(approx_shapes):
         if(len(approx_shapes[n]) == 4):
             triangleNumber = 0
