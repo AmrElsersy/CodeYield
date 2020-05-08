@@ -18,7 +18,7 @@ def upload():
         received_img.write(image)
     path = "Receivedimg/"+timenow+".png"
     imageprocessing(path)
-    os.system("shotwell " + path)
+    #os.system("shotwell " + path)
     return "Thank You"
     
 

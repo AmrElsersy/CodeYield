@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -22,6 +23,9 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
 
   File imageFile;
+  int deviceNumber = 2;
+  String base64Image;
+  String ipAddress;
 
   _openGallary() async {
     var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -35,6 +39,22 @@ class _LandingScreenState extends State<LandingScreen> {
       imageFile = picture;
     });
   }
+
+  Future<void> postServer(String url) async {
+    try {
+      await http.post(url,body: base64Image);
+    } on SocketException catch (err) {
+      if(deviceNumber < 10) {
+        deviceNumber++;
+        String url = 'http://' + ipAddress.toString() + deviceNumber.toString() + ':5000/uploadimg';
+        postServer(url);
+      }
+      else {
+        print(err);
+      }
+    }
+  }
+
 
   Future<void> _showChoiceDialog(BuildContext context) {
     return showDialog(context: context,builder: (BuildContext context) {
@@ -82,10 +102,11 @@ class _LandingScreenState extends State<LandingScreen> {
                       _showChoiceDialog(context);
                     }
                     else {
-                      String base64Image = base64Encode(imageFile.readAsBytesSync());
-                      String ipAddress = await GetIp.ipAddress;
-                      ipAddress = ipAddress.substring(0,ipAddress.length-1) + (int.parse(ipAddress[ipAddress.length - 1])-1).toString();
-                      http.post('http://' + ipAddress+ ':5000/uploadimg',body: base64Image);
+                      base64Image = base64Encode(imageFile.readAsBytesSync());
+                      ipAddress = await GetIp.ipAddress;
+                      ipAddress = ipAddress.substring(0,ipAddress.length-1);
+                      String url = 'http://' + ipAddress + deviceNumber.toString() + ':5000/uploadimg';
+                      postServer(url);
                     }
                   },
                     child: Text("Convert image",style: TextStyle(color: Colors.black54)),

@@ -206,3 +206,7 @@ def imageprocessing(path):
 	    for k in range(len(listOfRows[i].column2Shapes)):
 	        print(listOfRows[i].column2Shapes[k].name, ',', listOfRows[i].column2Shapes[k].allignment)
 	    print('ROW Finished')
+
+imageprocessing('raye2_test.jpg')
+cv.waitKey(0)
+cv.destroyAllWindows()
