@@ -46,12 +46,15 @@ class _LandingScreenState extends State<LandingScreen> {
     } on SocketException catch (err) {
       if(deviceNumber < 10) {
         deviceNumber++;
-        String url = 'http://' + ipAddress.toString() + deviceNumber.toString() + ':5000/uploadimg';
+        String url = 'http://' + ipAddress + deviceNumber.toString() + ':5000/uploadimg';
         postServer(url);
       }
       else {
         print(err);
       }
+    }
+    finally {
+      print('http://' + ipAddress + deviceNumber.toString() + ':5000/uploadimg');
     }
   }
 
