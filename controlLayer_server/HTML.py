@@ -261,5 +261,6 @@ def htmlGenerator(path):
 	HTML_File = open('Index.html','w+')
 	for line in html:
 	    HTML_File.write(line)
+	HTML_File.close()
 	print('Done')
 

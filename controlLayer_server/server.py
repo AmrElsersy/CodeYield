@@ -4,6 +4,7 @@ from HTML import htmlGenerator
 import base64
 import time
 import os
+import os.path
 import socket
 
 app = Flask(__name__)
@@ -18,8 +19,9 @@ def upload():
         received_img.write(image)
     path = "Receivedimg/"+timenow+".png"
     htmlGenerator(path)
-    os.system('google-chrome index.html')
-    return "Thank You"
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    os.system('google-chrome ' + my_path +'/Index.html')
+    return "Converting is finished"
     
 
 if __name__ == '__main__':
