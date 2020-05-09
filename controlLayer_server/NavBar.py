@@ -11,9 +11,6 @@ epsilon = 0.01 # tuned
 rect_ratio = 3 # 3 tuned
 clean = 50 # 20-30 tuned
 sigma = 33
-window_w = 1280
-window_h = 720
-
 
 
 # =============================================
@@ -42,7 +39,7 @@ def cleanDuplicatedRectangles(rectangles):
     # iterate over rectangles and check if one is parent of another so remove it 
     for i, rectangle in enumerate(rectangles):
         # it may be wrong as it may just skip i not start from it
-        for j,rect in enumerate (rectangles[i+1:]) :
+        for j,rect in enumerate (rectangles[i+1:]):
             if rectangle.firstChild == rect.i:
                 del rectangles[j]
                 break
@@ -70,8 +67,7 @@ def numLine(rect , lines):
 
 
 def navBar(path):
-    global window_h
-    global window_w
+
     global navbars
     global threshold 
     global hough_threshold 
@@ -79,7 +75,6 @@ def navBar(path):
     global rect_ratio
     # load the image
     image = cv2.imread(path)
-    image = cv2.resize(image,(window_w,window_h))
     grayImage = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
 
@@ -108,7 +103,7 @@ def navBar(path):
         area_cnt = cv2.contourArea(cnt)      
 
         # skip small curves and the biggest curves
-        if(len_cnt < 50) or (len_cnt > 2 * window_w):
+        if(len_cnt < 50) or (len_cnt > 2 * image.shape[1]):
             continue
 
         # get Corners 

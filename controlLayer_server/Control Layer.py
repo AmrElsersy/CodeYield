@@ -206,9 +206,11 @@ for i in range(len(listOfRows)):
     print('Column 2 Started')
     for k in range(len(listOfRows[i].column2Shapes)):
         print(listOfRows[i].column2Shapes[k].name, ',', listOfRows[i].column2Shapes[k].allignment)
-    print('ROW Finished')
+    print('ROW' + str(i+1) + 'Finished')
+
+    print('ROW Height' + str(i+1) ,listOfRows[i].height)
 
 
-cv.waitKey(0)
-cv.destroyAllWindows()
+#cv.waitKey(0)
+#cv.destroyAllWindows()
 

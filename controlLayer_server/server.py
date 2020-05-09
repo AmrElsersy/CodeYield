@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-from Controlfunction import imageprocessing
+from HTML import htmlGenerator
 import base64
 import time
 import os
@@ -17,8 +17,8 @@ def upload():
     with open ("Receivedimg/"+timenow+".png","wb") as received_img:
         received_img.write(image)
     path = "Receivedimg/"+timenow+".png"
-    imageprocessing(path)
-    #os.system("shotwell " + path)
+    htmlGenerator(path)
+    os.system('google-chrome index.html')
     return "Thank You"
     
 
