@@ -29,7 +29,7 @@ def imageprocessing(path):
 			self.widthRatio = 0
 			self.heightRatio = 0
 			# Right-Left
-			self.allignment = ""
+			self.allignment = ''
 
 	class HtmlRow:
 		def __init__(self):
@@ -48,21 +48,21 @@ def imageprocessing(path):
 	text = labelDetection(path)
 	for iterator in range(len(text)):
 		x, y, w, h = cv.boundingRect(text[iterator])
-		temporaryShape = Shape("TEXT", x + w / 2, y + h / 2, w, h, 0)
+		temporaryShape = Shape('TEXT', x + w / 2, y + h / 2, w, h, 0)
 		shapesList.append(temporaryShape)
 
 	# Retrieving labelBar
 	labelBar = labelBarDetection(path)
 	for iterator in range(len(labelBar)):
 		x, y, w, h = cv.boundingRect(labelBar[iterator])
-		temporaryShape = Shape("LABEL", x + w / 2, y + h / 2, w, h, 0)
+		temporaryShape = Shape('LABEL', x + w / 2, y + h / 2, w, h, 0)
 		shapesList.append(temporaryShape)
 
 	# Retrieving images
 	image = detectImage(path)
 	for iterator in range(len(image)):
 		x, y, w, h = cv.boundingRect(image[iterator])
-		temporaryShape = Shape("IMAGE", x + w / 2, y + h / 2, w, h, 0)
+		temporaryShape = Shape('IMAGE', x + w / 2, y + h / 2, w, h, 0)
 		shapesList.append(temporaryShape)
 
 	# Retrieving navigation bar
@@ -71,14 +71,14 @@ def imageprocessing(path):
 	for iterator in range(len(nav)):
 		x, y, w, h = cv.boundingRect(nav[iterator])
 
-		temporaryShape = Shape("NAV", x + w / 2, y + h / 2, w, h, 0)
+		temporaryShape = Shape('NAV', x + w / 2, y + h / 2, w, h, 0)
 		shapesList.append(temporaryShape)
 
 	# Retrieving icons
 	icon = detectIcon(path)
 	for iterator in range(len(icon)):
 		(x, y), rad = cv.minEnclosingCircle(icon[iterator])
-		temporaryShape = Shape("ICON", int(x), int(y), int(rad) * 2, int(rad) * 2, int(rad))
+		temporaryShape = Shape('ICON', int(x), int(y), int(rad) * 2, int(rad) * 2, int(rad))
 		shapesList.append(temporaryShape)
 
 	# Sorting by y-point
@@ -160,13 +160,13 @@ def imageprocessing(path):
 				# Assigning shape allignment
 				shapeAllignment = (listOfRows[rowsCounter].column1Ratio * imageWidth) / 3
 				if listOfRows[rowsCounter].shapesPerRow[shapes].x <= shapeAllignment:
-					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
+					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = 'LEFT'
 
 				elif listOfRows[rowsCounter].shapesPerRow[shapes].x <= 2 * shapeAllignment:
-					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "Center"
+					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = 'Center'
 
 				else:
-					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
+					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = 'RIGHT'
 
 			else:
 				listOfRows[rowsCounter].column2Shapes.append(listOfRows[rowsCounter].shapesPerRow[shapes])
@@ -183,13 +183,13 @@ def imageprocessing(path):
 				column1XPoint = (listOfRows[rowsCounter].column1Ratio * imageWidth)
 				shapeAllignment = (imageWidth - column1XPoint) / 3
 				if listOfRows[rowsCounter].shapesPerRow[shapes].x <= (shapeAllignment + column1XPoint):
-					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "LEFT"
+					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = 'LEFT'
 
 				elif listOfRows[rowsCounter].shapesPerRow[shapes].x <= (2 * shapeAllignment + column1XPoint):
-					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "Center"
+					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = 'Center'
 
 				else:
-					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = "RIGHT"
+					listOfRows[rowsCounter].shapesPerRow[shapes].allignment = 'RIGHT'
 	for i in range(len(listOfRows)):
 
 		print('Column 1 Started')
@@ -201,11 +201,11 @@ def imageprocessing(path):
 			print(listOfRows[i].column2Shapes[k].name, ',', listOfRows[i].column2Shapes[k].allignment)
 		print('ROW' + str(i + 1) + 'Finished')
 
-		print('ROW Height' + str(i + 1), listOfRows[i].height)
+		# print('ROW Height' + str(i + 1), listOfRows[i].height)
 
 	return listOfRows
 
 
-#imageprocessing('raye2_test.jpg')
+print(imageprocessing('raye2_test.jpg'))
 # cv.waitKey(0)
 # cv.destroyAllWindows()
