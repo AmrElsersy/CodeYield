@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import random
-from matplotlib import pyplot as plt
+
 
 # Tuning Parameters
 sigma = 0.33 # Canny's formula
@@ -55,12 +55,11 @@ def detectIcon(path):
             center = (int(x), int(y))
             rad = int(rad)
             img = cv.circle(img, center, rad, (0, 255, 0), 5)
-            #print(x, y)
             iconsDetected.append(approx)
 
         hierarchyCounter += 1
 
-    cv.imshow('circle',img)
+    #cv.imshow('circle',img)
     return iconsDetected
 
 

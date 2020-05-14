@@ -1,6 +1,5 @@
 import cv2 as cv
 import numpy as np
-from matplotlib import pyplot as plt
 
 # Tuning Parameters
 sigma = 0.33 # Canny's formula
@@ -89,6 +88,6 @@ def labelBarDetection(path):
                 detectedLabelBars.append(approx)
                 
         hierarchyCounter += 1
-    cv.imshow('label', img)
+    #cv.imshow('label', img)
     return detectedLabelBars
 

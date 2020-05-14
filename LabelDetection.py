@@ -1,4 +1,3 @@
-from matplotlib import pyplot as plt
 import cv2
 import numpy as np
 import random
@@ -51,6 +50,6 @@ def labelDetection(scrImagePath):
 
         hierarchyCounter += 1
 
-    cv2.imshow('text',img)
+    #cv2.imshow('text',img)
     return detectedLabels
 
